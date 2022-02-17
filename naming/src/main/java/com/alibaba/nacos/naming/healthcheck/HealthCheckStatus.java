@@ -13,69 +13,72 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.alibaba.nacos.naming.healthcheck;
 
-
-import com.alibaba.nacos.naming.core.Cluster;
-import com.alibaba.nacos.naming.core.Domain;
-import com.alibaba.nacos.naming.core.IpAddress;
+import com.alibaba.nacos.naming.core.Instance;
 import com.alibaba.nacos.naming.misc.Loggers;
 
+import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * Health check status.
+ *
  * @author nacos
  */
-public class HealthCheckStatus {
+public class HealthCheckStatus implements Serializable {
+    
+    private static final long serialVersionUID = -5791320072773064978L;
+    
     public AtomicBoolean isBeingChecked = new AtomicBoolean(false);
+    
     public AtomicInteger checkFailCount = new AtomicInteger(0);
-    public AtomicInteger checkOKCount = new AtomicInteger(0);
-    public long checkRT = -1L;
-
-    private static ConcurrentMap<String, HealthCheckStatus> statusMap =
-            new ConcurrentHashMap<String, HealthCheckStatus>();
-
-    public static void reset(IpAddress ip) {
-        statusMap.put(buildKey(ip), new HealthCheckStatus());
+    
+    public AtomicInteger checkOkCount = new AtomicInteger(0);
+    
+    public long checkRt = -1L;
+    
+    private static ConcurrentMap<String, HealthCheckStatus> statusMap = new ConcurrentHashMap<>();
+    
+    public static void reset(Instance instance) {
+        statusMap.put(buildKey(instance), new HealthCheckStatus());
     }
-
-    public static HealthCheckStatus get(IpAddress ip) {
-        String key = buildKey(ip);
-
+    
+    /**
+     * Get health check status of instance.
+     *
+     * @param instance instance
+     * @return health check status
+     */
+    public static HealthCheckStatus get(Instance instance) {
+        String key = buildKey(instance);
+        
         if (!statusMap.containsKey(key)) {
             statusMap.putIfAbsent(key, new HealthCheckStatus());
         }
-
+        
         return statusMap.get(key);
     }
-
-    public static void remv(IpAddress ip) {
-        statusMap.remove(buildKey(ip));
+    
+    public static void remv(Instance instance) {
+        statusMap.remove(buildKey(instance));
     }
-
-    private static String buildKey(IpAddress ip) {
+    
+    private static String buildKey(Instance instance) {
         try {
-            Cluster cluster = ip.getCluster();
-            Domain domain = cluster.getDom();
-
-            if (domain == null) {
-                Loggers.SRV_LOG.warn("BUILD-KEY", "domain is null, ip: " + ip.toIPAddr());
-                return ip.getDefaultKey();
-            }
-
-            String clusterName = cluster.getName();
-            String dom = domain.getName();
-            String datumKey = ip.getDatumKey();
-            return dom + ":"
-                    + clusterName + ":"
-                    + datumKey;
+            
+            String clusterName = instance.getClusterName();
+            String serviceName = instance.getServiceName();
+            String datumKey = instance.getDatumKey();
+            return serviceName + ":" + clusterName + ":" + datumKey;
         } catch (Throwable e) {
-            Loggers.SRV_LOG.error("BUILD-KEY", "Exception while set rt, ip " + ip.toJSON(), e);
+            Loggers.SRV_LOG.error("[BUILD-KEY] Exception while set rt, ip {}, error: {}", instance.toJson(), e);
         }
-
-        return ip.getDefaultKey();
+        
+        return instance.getDefaultKey();
     }
 }

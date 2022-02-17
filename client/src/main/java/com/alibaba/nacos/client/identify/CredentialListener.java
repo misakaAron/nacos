@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.alibaba.nacos.client.identify;
 
 /**
- * Credential Listener
- * 
- * @author Nacos
+ * Credential Listener.
  *
+ * @author Nacos
  */
 public interface CredentialListener {
-	/**
-	 * update Credential
-	 */
-    public void onUpdateCredential();
+    
+    /**
+     * update Credential.
+     */
+    void onUpdateCredential();
 }

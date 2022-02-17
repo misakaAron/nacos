@@ -13,36 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.alibaba.nacos.naming.misc;
 
-import com.alibaba.nacos.naming.boot.RunningConfig;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import com.alibaba.nacos.common.utils.InternetAddressUtil;
+import com.alibaba.nacos.sys.env.EnvUtil;
+import com.alibaba.nacos.sys.utils.InetUtils;
 
 /**
+ * Net Utils.
+ *
  * @author nacos
  */
 public class NetUtils {
-
-    public static String localIP() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress() + ":" + RunningConfig.getServerPort();
-        } catch (UnknownHostException e) {
-            return "resolve_failed";
-        }
+    
+    /**
+     * Get local server address.
+     *
+     * @return local server address
+     */
+    public static String localServer() {
+        return InetUtils.getSelfIP() + InternetAddressUtil.IP_PORT_SPLITER + EnvUtil.getPort();
     }
-
-    public static String num2ip(int ip) {
-        int[] b = new int[4];
-        String x = "";
-
-        b[0] = (int) ((ip >> 24) & 0xff);
-        b[1] = (int) ((ip >> 16) & 0xff);
-        b[2] = (int) ((ip >> 8) & 0xff);
-        b[3] = (int) (ip & 0xff);
-        x = Integer.toString(b[0]) + "." + Integer.toString(b[1]) + "." + Integer.toString(b[2]) + "." + Integer.toString(b[3]);
-
-        return x;
-    }
+    
 }

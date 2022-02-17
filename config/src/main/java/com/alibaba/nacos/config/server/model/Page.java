@@ -13,75 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.alibaba.nacos.config.server.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * 分页对象
- * 
+ * Page.
+ *
  * @author boyan
  * @date 2010-5-6
- * @param <E>
  */
 public class Page<E> implements Serializable {
+    
     static final long serialVersionUID = -1L;
+    
     /**
-     * 总记录数
+     * totalCount.
      */
-    private int totalCount; 
+    private int totalCount;
+    
     /**
-     *  页数
+     * pageNumber.
      */
-    private int pageNumber; 
+    private int pageNumber;
+    
     /**
-     *  总页数
+     * pagesAvailable.
      */
-    private int pagesAvailable; 
+    private int pagesAvailable;
+    
     /**
-     *  该页内容
+     * pageItems.
      */
-    private List<E> pageItems = new ArrayList<E>(); 
-
-
+    private List<E> pageItems = new ArrayList<E>();
+    
     public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
     }
-
-
+    
     public void setPagesAvailable(int pagesAvailable) {
         this.pagesAvailable = pagesAvailable;
     }
-
-
+    
     public void setPageItems(List<E> pageItems) {
         this.pageItems = pageItems;
     }
-
-
+    
     public int getTotalCount() {
         return totalCount;
     }
-
-
+    
     public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
     }
-
-
+    
     public int getPageNumber() {
         return pageNumber;
     }
-
-
+    
     public int getPagesAvailable() {
         return pagesAvailable;
     }
-
-
+    
     public List<E> getPageItems() {
         return pageItems;
     }
